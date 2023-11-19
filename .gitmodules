@@ -31,3 +31,6 @@
 [submodule "ext/json-schema-validator"]
 	path = ext/json-schema-validator
 	url = https://github.com/pboettch/json-schema-validator
+[submodule "ext/libpng"]
+	path = ext/libpng
+	url = https://github.com/glennrp/libpng
