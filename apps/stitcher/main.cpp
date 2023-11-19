@@ -237,7 +237,7 @@ void postSyncPreDraw() {
 void preWinInit() {
     Engine::instance().defaultUser().setEyeSeparation(settings.eyeSeparation);
     for (const std::unique_ptr<Window>& win : Engine::instance().windows()) {
-        Engine::instance().setScreenShotNumber(startFrame);
+        Engine::instance().setScreenshotNumber(startFrame);
         win->setAlpha(settings.alpha);
 
         for (const std::unique_ptr<Viewport>& vp : win->viewports()) {
@@ -384,7 +384,7 @@ void initOGL(GLFWwindow*) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    ShaderManager::instance().addShaderProgram("simple", vertexShader, fragmentShader);
+    ShaderManager::instance().addShaderProgram("simple", VertexShader, FragmentShader);
 }
 
 std::vector<std::byte> encode() {
@@ -393,11 +393,12 @@ std::vector<std::byte> encode() {
     return data;
 }
 
-void decode(const std::vector<std::byte>& data, unsigned int pos) {
+void decode(const std::vector<std::byte>& data) {
+    unsigned int pos = 0;
     deserializeObject(data, pos, takeScreenshot);
 }
 
-void keyboard(Key key, Modifier, Action action, int) {
+void keyboard(Key key, Modifier, Action action, int, Window *window) {
     if (Engine::instance().isMaster() && action == Action::Press) {
         switch (key) {
             case Key::Esc:
@@ -607,7 +608,6 @@ int main(int argc, char** argv) {
 
     try {
         Engine::create(cluster, callbacks, config);
-        Engine::instance().setClearColor(vec4{ 0.f, 0.f, 0.f, 1.f });
     }
     catch (const std::runtime_error& e) {
         Log::Error(e.what());
@@ -615,7 +615,7 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    Engine::instance().render();
+    Engine::instance().exec();
     Engine::destroy();
     exit(EXIT_SUCCESS);
 }
