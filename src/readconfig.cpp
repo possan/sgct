@@ -48,7 +48,7 @@ namespace {
         if (t == "top_bottom") { return M::TopBottom; }
         if (t == "top_bottom_inverted") { return M::TopBottomInverted; }
 
-        throw Err(6085, fmt::format("Unkonwn stereo mode {}", t));
+        throw Err(6085, fmt::format("Unknown stereo mode {}", t));
     }
 
     std::string_view toString(sgct::config::Window::StereoMode mode) {
@@ -685,7 +685,6 @@ sgct::config::Window parseWindow(tinyxml2::XMLElement& elem, int count) {
     window.doubleBuffered = parseValue<bool>(elem, "dbuffered");
 
     window.msaa = parseValue<int>(elem, "msaa");
-    window.hasAlpha = parseValue<bool>(elem, "alpha");
     window.useFxaa = parseValue<bool>(elem, "fxaa");
 
     window.isDecorated = parseValue<bool>(elem, "decorated");
@@ -992,7 +991,6 @@ sgct::config::Cluster readXMLFile(const std::filesystem::path& path) {
 
     cluster.setThreadAffinity = parseValue<int>(root, "setThreadAffinity");
     cluster.debugLog = parseValue<bool>(root, "debugLog");
-    cluster.externalControlPort = parseValue<int>(root, "externalControlPort");
     cluster.firmSync = parseValue<bool>(root, "firmSync");
 
     if (tinyxml2::XMLElement* e = root.FirstChildElement("Scene"); e) {
@@ -2154,7 +2152,6 @@ void from_json(const nlohmann::json& j, Window& w) {
     parseValue(j, "doublebuffered", w.doubleBuffered);
 
     parseValue(j, "msaa", w.msaa);
-    parseValue(j, "alpha", w.hasAlpha);
     parseValue(j, "fxaa", w.useFxaa);
 
     parseValue(j, "border", w.isDecorated);
@@ -2250,10 +2247,6 @@ void to_json(nlohmann::json& j, const Window& w) {
 
     if (w.msaa.has_value()) {
         j["msaa"] = *w.msaa;
-    }
-
-    if (w.hasAlpha.has_value()) {
-        j["alpha"] = *w.hasAlpha;
     }
 
     if (w.useFxaa.has_value()) {
@@ -2364,7 +2357,6 @@ void from_json(const nlohmann::json& j, Cluster& c) {
 
     parseValue(j, "threadaffinity", c.setThreadAffinity);
     parseValue(j, "debuglog", c.debugLog);
-    parseValue(j, "externalcontrolport", c.externalControlPort);
     parseValue(j, "firmsync", c.firmSync);
 
     parseValue(j, "scene", c.scene);
@@ -2385,10 +2377,6 @@ void to_json(nlohmann::json& j, const Cluster& c) {
 
     if (c.debugLog.has_value()) {
         j["debuglog"] = *c.debugLog;
-    }
-
-    if (c.externalControlPort.has_value()) {
-        j["externalcontrolport"] = *c.externalControlPort;
     }
 
     if (c.firmSync.has_value()) {
@@ -2434,15 +2422,20 @@ void from_json(const nlohmann::json& j, GeneratorVersion& v) {
 
 void from_json(const nlohmann::json& j, Meta& m) {
     if (auto it = j.find("meta");  it != j.end()) {
-        try {
+        if (it->find("description") != it->end()) {
             parseValue(*it, "description", m.description);
-            parseValue(*it, "name", m.name);
-            parseValue(*it, "author", m.author);
-            parseValue(*it, "license", m.license);
-            parseValue(*it, "version", m.version);
         }
-        catch (const std::runtime_error& e) {
-            return;
+        if (it->find("name") != it->end()) {
+            parseValue(*it, "name", m.name);
+        }
+        if (it->find("author") != it->end()) {
+            parseValue(*it, "author", m.author);
+        }
+        if (it->find("license") != it->end()) {
+            parseValue(*it, "license", m.license);
+        }
+        if (it->find("version") != it->end()) {
+            parseValue(*it, "version", m.version);
         }
     }
 }
@@ -2780,6 +2773,8 @@ sgct::config::Meta readMeta(const std::string& filename, bool ignoreErrors) {
             throw Err(6082, e.what());
         }
     }
+
+    return sgct::config::Meta();
 }
 
 } // namespace sgct

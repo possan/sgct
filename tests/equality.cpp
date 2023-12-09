@@ -288,7 +288,6 @@ bool operator==(const Window& lhs, const Window& rhs) {
         lhs.isHidden == rhs.isHidden &&
         lhs.doubleBuffered == rhs.doubleBuffered &&
         lhs.msaa == rhs.msaa &&
-        lhs.hasAlpha == rhs.hasAlpha &&
         lhs.useFxaa == rhs.useFxaa &&
         lhs.isDecorated == rhs.isDecorated &&
         lhs.draw2D == rhs.draw2D &&
@@ -319,7 +318,6 @@ bool operator==(const Cluster& lhs, const Cluster& rhs) {
         lhs.masterAddress == rhs.masterAddress &&
         lhs.debugLog == rhs.debugLog &&
         lhs.setThreadAffinity == rhs.setThreadAffinity &&
-        lhs.externalControlPort == rhs.externalControlPort &&
         lhs.firmSync == rhs.firmSync &&
         lhs.scene == rhs.scene &&
         lhs.nodes == rhs.nodes &&

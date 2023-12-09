@@ -317,7 +317,6 @@ struct SGCT_EXPORT Window {
     std::optional<bool> isHidden;
     std::optional<bool> doubleBuffered;
     std::optional<int> msaa;
-    std::optional<bool> hasAlpha;
     std::optional<bool> useFxaa;
     std::optional<bool> isDecorated;
     std::optional<bool> isResizable;
@@ -355,7 +354,6 @@ struct SGCT_EXPORT Cluster {
     std::string masterAddress;
     std::optional<bool> debugLog;
     std::optional<int> setThreadAffinity;
-    std::optional<int> externalControlPort;
     std::optional<bool> firmSync;
     std::optional<Scene> scene;
     std::vector<Node> nodes;
